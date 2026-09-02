@@ -1,0 +1,14 @@
+# NetBeans-generated files
+/build/
+/dist/
+/nbproject/private/
+
+# Compiled Java files
+*.class
+
+# Game-generated save data
+/savegame.txt
+
+# Operating-system files
+.DS_Store
+Thumbs.db
