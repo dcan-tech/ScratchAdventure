@@ -6,7 +6,6 @@ package scratchadventure;
 
 import java.util.Scanner;
 
-
 /**
  *
  * @author Dylan Canfield
@@ -14,8 +13,10 @@ import java.util.Scanner;
 // runs the game, process player input
 // coordinate World, Player, rooms, items and save system
 public class Game {
+
     private final Scanner scanner = new Scanner(System.in); // player input
     private final CommandParser commandParser = new CommandParser();
+    private final StructuredCommandParser structuredCommandParser = new StructuredCommandParser();
     private final GameState gameState;
     private final CommandHandler commandHandler;
     private final ItemCommandHandler itemCommandHandler;
@@ -26,7 +27,7 @@ public class Game {
         Player player = new Player();
         World world = new WorldGenerator().generate();
         SaveManager saveManager = new SaveManager();
-        
+
         gameState = new GameState(world, player);
         itemCommandHandler = new ItemCommandHandler(gameState);
         gamePersistence = new GamePersistence(gameState, saveManager);
@@ -49,15 +50,18 @@ public class Game {
         System.out.println();
         commandHandler.showCurrentRoom();
     }
-    
+
     private void playOneTurn() { // player input
         System.out.print("> ");
         String input = scanner.nextLine();
         Command command = commandParser.parse(input);
-        commandHandler.handleCommand(command);
+        ParsedCommand parsedCommand = structuredCommandParser.parse(input);
+
+        if (parsedCommand.action().equals("put") || parsedCommand.action().equals("place")) {
+            commandHandler.handleStructuredCommand(parsedCommand);
+        } else {
+
+            commandHandler.handleCommand(command);
+        }
     }
 }
-
-    
-
-    

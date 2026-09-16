@@ -16,13 +16,13 @@ import java.util.ArrayList;
 public class CommandHandler {
 
     private final GameState gameState;
-    
+
     private final ItemCommandHandler itemCommandHandler;
     private final GamePersistence gamePersistence;
 
     public CommandHandler(GameState gameState, ItemCommandHandler itemCommandHandler, GamePersistence gamePersistence) {
         this.gameState = gameState;
-        
+
         this.itemCommandHandler = itemCommandHandler;
         this.gamePersistence = gamePersistence;
     }
@@ -53,11 +53,11 @@ public class CommandHandler {
                     itemCommandHandler.dropItem(target);
                 }
             }
-            
+
             case "open" -> {
                 itemCommandHandler.openItem(target);
             }
-            
+
             case "close" -> {
                 itemCommandHandler.closeItem(target);
             }
@@ -105,7 +105,45 @@ public class CommandHandler {
         }
     }
 
-    
+    public void handleStructuredCommand(ParsedCommand command) {
+        String action = command.action();
+        String target = command.target();
+        String connector = command.connector();
+        String secondTarget = command.secondTarget();
+
+        switch (action) {
+            case "put", "place" -> {
+                handlePutCommand(target, connector, secondTarget);
+            }
+        }
+    }
+
+    private void handlePutCommand(String target, String connector, String secondTarget) {
+        if (target == null) {
+            System.out.println("What are you trying to put or place?");
+            return;
+        }
+        
+        if (connector == null) {
+            System.out.println("What are you trying to do with it?");
+            return;
+        }
+
+        if (!connector.equals("in") && !connector.equals("into")) {
+            System.out.println("Invalid connector.");
+            return;
+        }
+
+        if (secondTarget == null) {
+            System.out.println("What are you trying to put or place into?");
+            return;
+        }
+        
+        System.out.println("Ready to place " + target + " " + connector + " " + secondTarget + ".");
+        itemCommandHandler.putItem(target, secondTarget);
+
+    }
+
     public void showCurrentRoom() { // room description
         System.out.println(gameState.getCurrentRoom().describe());
     }
@@ -126,8 +164,6 @@ public class CommandHandler {
         System.out.println();
         showCurrentRoom();
     }
-
-    
 
     private void showHelp() { // display help to player
         System.out.println("Scratch Adventure Help");

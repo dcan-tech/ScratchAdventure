@@ -58,6 +58,65 @@ public class ItemCommandHandler {
         }
     }
     
+    public void putItem(String itemName, String containerName) { // put/place items in containers
+        List<Item> searchResults = gameState.getPlayer().findItemsByName(itemName);
+
+        switch (searchResults.size()) {
+
+            case 0 -> {
+                System.out.println("You aren't carrying a " + itemName + "!");
+            }
+
+            case 1 -> {
+                Item foundItem = searchResults.get(0);
+                List<Item> containerSearchResults = gameState.getCurrentRoom().findItemsByName(containerName);
+
+                switch (containerSearchResults.size()) {
+                    case 0 -> {
+                        System.out.println("I don't see anything like that here.");
+                    }
+
+                    case 1 -> {
+                        Item foundContainerItem = containerSearchResults.get(0);
+                        if (foundContainerItem instanceof Container container) { // check for valid container
+                            if (container.isOpen()) {
+                                boolean removed = gameState.getPlayer().removeItem(foundItem); // remove item from player
+                                if (removed) {
+                                    container.addItem(foundItem);
+                                    System.out.println("You put the " + foundItem.getName() + " in the " + container.getName() + ".");
+
+                                }
+                            } else {
+                                System.out.println("The " + container.getName() + " is closed.");
+                            }
+                        } else {
+                            System.out.println("The " + containerName + " isn't a container.");
+                        }
+                    }
+
+                    default -> {
+                        System.out.println("There is more than one " + foundItem.getName() + ". Please be more specific." );
+                    }
+
+                }
+
+            }
+
+            default -> {
+                System.out.println("I see more than one item called " + itemName
+                        + ". Please be more specific.");
+
+            }
+        }
+    }
+
+        
+    
+        
+    
+    
+    
+    
     // remove item from player inventory and add to Room
     public void dropItem(String itemName) {
         List<Item> searchResults = gameState.getPlayer().findItemsByName(itemName);

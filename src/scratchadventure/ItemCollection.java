@@ -46,8 +46,8 @@ public class ItemCollection {
         return storedItems.isEmpty();
     }
 
-    // Finds item by name and removes it from ItemCollection list
-    // Returns item or null if not found
+    // remove item from collection or valid container
+    // returns true if removed, false otherwise
     public boolean removeItem(Item item) {
         if (storedItems.remove(item)) {
             return true;
